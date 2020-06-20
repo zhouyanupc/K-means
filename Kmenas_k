@@ -1,0 +1,38 @@
+'''
+K-Means 手肘法
+'''
+
+# 统计不同K取值的误差平方和
+from sklearn import preprocessing
+from sklearn.cluster import KMeans
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 数据加载
+data = pd.read_csv('team_cluster_data.csv', encoding='gbk')
+train_x = data[['2019国际排名', '2018世界杯排名','2015亚洲杯排名']]
+# 数据规范化
+min_max_scaler = preprocessing.MinMaxScaler()
+train_x = min_max_scaler.fit_transform(train_x)
+# 手肘法确定K值
+sse = []
+for k in range(1, 11):
+	# kmeans算法
+	kmeans = KMeans(n_clusters=k)
+	kmeans.fit(train_x)
+	# 计算inertia簇内误差平方和，sum of the squared errors
+	sse.append(kmeans.inertia_)
+x = range(1, 11)
+plt.xlabel('K')
+plt.ylabel('SSE')
+plt.plot(x, sse, 'o-')
+plt.show()
+
+# 确定k取值为3
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(train_x)
+predict_y = kmeans.predict(train_x)
+# 合并聚类结果
+result = pd.concat((data, pd.DataFrame(predict_y)), axis=1)
+result.rename({0:u'聚类结果'}, axis=1, inplace=True)
+result.to_csv('team_cluster_result.csv')
