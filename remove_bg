@@ -1,0 +1,10 @@
+# 调用100层 Tiramisu 进行图像分割
+# Tiramisu 论文：https://arxiv.org/pdf/1611.09326.pdf
+# API申请地址：https://www.remove.bg/
+from removebg import RemoveBg
+import os
+
+rmbg = RemoveBg("BvZpd8AamfMQnm2s4mGSCqeS", "error.log")
+path = os.path.join(os.getcwd(),'images')
+for pic in os.listdir(path):
+    rmbg.remove_background_from_img_file(f"{path}\{pic}")
